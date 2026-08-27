@@ -163,29 +163,16 @@ public class HealthPotionItem : WeaponItem
 
     public override void UsePrimary(PlayerInventory owner, Vector2 aimDirection)
     {
-        owner.TryHeal(healAmount);
+        CharacterManager character = owner.GetComponent<CharacterManager>();
+        if (character != null)
+            character.TryHeal(healAmount);
     }
 
     public override void UseSecondary(PlayerInventory owner, Vector2 aimDirection)
     {
-        owner.TryHeal(healAmount + 1);
-    }
-}
-
-[CreateAssetMenu(menuName = "Items/Shield")]
-public class ShieldItem : WeaponItem
-{
-    [SerializeField] private GameObject shieldPrefab;
-    [SerializeField] private Vector2 shieldDirection = new Vector2(1f, 0f);
-
-    public override void UsePrimary(PlayerInventory owner, Vector2 aimDirection)
-    {
-        owner.ActivateShield(aimDirection == Vector2.zero ? shieldDirection : aimDirection);
-    }
-
-    public override void UseSecondary(PlayerInventory owner, Vector2 aimDirection)
-    {
-        owner.ActivateShield(aimDirection == Vector2.zero ? -shieldDirection : -aimDirection);
+        CharacterManager character = owner.GetComponent<CharacterManager>();
+        if (character != null)
+            character.TryHeal(healAmount + 1);
     }
 }
 
