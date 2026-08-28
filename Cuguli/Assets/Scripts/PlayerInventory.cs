@@ -7,11 +7,26 @@ public class PlayerInventory : MonoBehaviour
     [SerializeField] private WeaponItem slot1Weapon;
     [SerializeField] private WeaponItem slot2Weapon;
 
+    [Header("Weapon Visual")]
+    [SerializeField] private Transform weaponVisualParent;
+    [SerializeField] private Vector3 weaponVisualOffset = new Vector3(1f, 0f, 0f);
+
     private float nextPrimaryTime;
     private float nextSecondaryTime;
+    private GameObject slot1Visual;
+    private GameObject slot2Visual;
 
     public WeaponItem Slot1Weapon => slot1Weapon;
     public WeaponItem Slot2Weapon => slot2Weapon;
+
+    private void Awake()
+    {
+        if (weaponVisualParent == null)
+            weaponVisualParent = transform;
+
+        slot1Visual = CreateWeaponVisual(slot1Weapon);
+        slot2Visual = CreateWeaponVisual(slot2Weapon);
+    }
 
     private void Update()
     {
@@ -28,11 +43,38 @@ public class PlayerInventory : MonoBehaviour
     public void EquipSlot1(WeaponItem weapon)
     {
         slot1Weapon = weapon;
+        ReplaceWeaponVisual(ref slot1Visual, weapon);
     }
 
     public void EquipSlot2(WeaponItem weapon)
     {
         slot2Weapon = weapon;
+        ReplaceWeaponVisual(ref slot2Visual, weapon);
+    }
+
+    private void ReplaceWeaponVisual(ref GameObject currentVisual, WeaponItem weapon)
+    {
+        if (currentVisual != null)
+            Destroy(currentVisual);
+
+        currentVisual = CreateWeaponVisual(weapon);
+    }
+
+    private GameObject CreateWeaponVisual(WeaponItem weapon)
+    {
+        if (weapon == null || weapon.VisualPrefab == null)
+            return null;
+
+        GameObject visual = Instantiate(weapon.VisualPrefab, weaponVisualParent);
+        visual.transform.localPosition = weaponVisualOffset;
+        visual.transform.localRotation = Quaternion.identity;
+
+        if (!visual.TryGetComponent<FloatingObject>(out FloatingObject floatingObject))
+            floatingObject = visual.AddComponent<FloatingObject>();
+
+        floatingObject.SetStartPosition(weaponVisualOffset);
+
+        return visual;
     }
 
     public void UsePrimaryAttack()
@@ -44,7 +86,10 @@ public class PlayerInventory : MonoBehaviour
             return;
 
         slot1Weapon.UsePrimary(this, GetAimDirection());
-        transform.Rotate(0f, 0f, 90f);
+
+        if (slot1Weapon.RotatesOwnerOnPrimaryAttack)
+            transform.Rotate(0f, 0f, 90f);
+
         nextPrimaryTime = Time.time + slot1Weapon.Cooldown;
     }
 
