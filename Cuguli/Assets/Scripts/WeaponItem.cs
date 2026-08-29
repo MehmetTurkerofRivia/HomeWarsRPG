@@ -13,6 +13,8 @@ public abstract class WeaponItem : ScriptableObject
     public float Cooldown => cooldown;
     public GameObject VisualPrefab => visualPrefab;
     public bool RotatesOwnerOnPrimaryAttack => rotatesOwnerOnPrimaryAttack;
+    public virtual bool IsSword => false;
+    public virtual bool IsBow => false;
 
     public abstract void UsePrimary(PlayerInventory owner, Vector2 aimDirection);
     public abstract void UseSecondary(PlayerInventory owner, Vector2 aimDirection);

@@ -19,6 +19,12 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < storage.Length; i++)
         {
+            if (storage[i] == item)
+                return false;
+        }
+
+        for (int i = 0; i < storage.Length; i++)
+        {
             if (storage[i] == null)
             {
                 storage[i] = item;

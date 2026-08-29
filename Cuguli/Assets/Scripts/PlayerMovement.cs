@@ -19,7 +19,6 @@ public class PlayerMovement : MonoBehaviour
     private void Update()
     {
         HandleMovement();
-        HandleCombatInput();
     }
 
     private void HandleMovement()
@@ -55,18 +54,4 @@ public class PlayerMovement : MonoBehaviour
         rb.linearVelocity = currentVelocity;
     }
 
-    private void HandleCombatInput()
-    {
-        if (inventory == null)
-            return;
-
-        if (Mouse.current != null)
-        {
-            if (Mouse.current.leftButton.wasPressedThisFrame)
-                inventory.UsePrimaryAttack();
-
-            if (Mouse.current.rightButton.wasPressedThisFrame)
-                inventory.UseSecondaryAttack();
-        }
-    }
 }

@@ -13,6 +13,8 @@ public class SwordWeaponItem : WeaponItem
     [SerializeField] private float radius = 1.3f;
     [SerializeField] private GameObject swingEffect;
 
+    public override bool IsSword => true;
+
     public override void UsePrimary(PlayerInventory owner, Vector2 aimDirection)
     {
         owner.StartCoroutine(DoSwordSwing(owner, aimDirection));
@@ -56,46 +58,58 @@ public class BowWeaponItem : WeaponItem
 {
     [SerializeField] private GameObject arrowPrefab;
     [SerializeField] private float projectileSpeed = 10f;
-    [SerializeField] private float spreadRange = 18f;
+
+    public override bool IsBow => true;
 
     public override void UsePrimary(PlayerInventory owner, Vector2 aimDirection)
     {
-        SpawnArrow(owner, aimDirection, 0f);
+        Debug.Log($"UsePrimary called - aimDirection: {aimDirection}, arrowPrefab: {arrowPrefab}");
+        
+        // Rastgele -15 ile +15 derece arasında
+        float randomOffset = Random.Range(-15f, 15f);
+        
+        if (aimDirection == Vector2.zero)
+        {
+            Debug.Log("aimDirection is zero, returning");
+            return;
+        }
+        
+        if (arrowPrefab == null)
+        {
+            Debug.Log("arrowPrefab is null, returning");
+            return;
+        }
+
+        // Mouse yönünün açısı
+        float baseAngleDeg = Mathf.Atan2(aimDirection.y, aimDirection.x) * Mathf.Rad2Deg;
+        float finalAngleDeg = baseAngleDeg + randomOffset;
+        
+        // OK yönü
+        float angleRad = finalAngleDeg * Mathf.Deg2Rad;
+        Vector2 arrowDir = new Vector2(Mathf.Cos(angleRad), Mathf.Sin(angleRad));
+        
+        // Spawn pozisyonu
+        Vector3 spawnPos = owner.transform.position + (Vector3)aimDirection.normalized * 0.8f;
+        
+        // OK oluştur ve ata
+        GameObject arrow = Instantiate(arrowPrefab, spawnPos, Quaternion.Euler(0, 0, finalAngleDeg));
+        Debug.Log($"Arrow created at {spawnPos}");
+        
+        // Fizik ayarla
+        Rigidbody2D rb = arrow.GetComponent<Rigidbody2D>();
+        if (rb == null)
+            rb = arrow.AddComponent<Rigidbody2D>();
+        
+        rb.gravityScale = 0f;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        rb.linearVelocity = arrowDir * projectileSpeed;
+        
+        Debug.Log($"Arrow spawned successfully with velocity: {arrowDir * projectileSpeed}");
     }
 
     public override void UseSecondary(PlayerInventory owner, Vector2 aimDirection)
     {
-        SpawnArrow(owner, aimDirection, -spreadRange);
-        SpawnArrow(owner, aimDirection, spreadRange);
-    }
-
-    private void SpawnArrow(PlayerInventory owner, Vector2 aimDirection, float angleOffset)
-    {
-        if (aimDirection == Vector2.zero)
-            return;
-
-        if (arrowPrefab == null)
-        {
-            Debug.Log("Bow has no arrow prefab.");
-            return;
-        }
-
-        float angle = Mathf.Atan2(aimDirection.y, aimDirection.x) * Mathf.Rad2Deg + angleOffset;
-        Quaternion rotation = Quaternion.Euler(0f, 0f, angle);
-        Vector3 spawnPosition = owner.transform.position + (Vector3)aimDirection.normalized * 0.8f;
-
-        GameObject arrow = Object.Instantiate(arrowPrefab, spawnPosition, rotation);
-        Rigidbody2D rb = arrow.GetComponent<Rigidbody2D>();
-
-        if (rb != null)
-        {
-            Vector2 arrowDirection = (Quaternion.Euler(0f, 0f, angleOffset) * aimDirection.normalized);
-            rb.linearVelocity = arrowDirection * projectileSpeed;
-        }
-        else
-        {
-            arrow.transform.right = aimDirection.normalized;
-        }
+        // Secondary için hiçbir şey yapma (ya da double arrow istersen burada yaz)
     }
 }
 
@@ -123,7 +137,7 @@ public class MagicWeaponItem : WeaponItem
         if (aimDirection == Vector2.zero)
             return;
 
-        Vector2 targetPosition = (Vector2)owner.transform.position + aimDirection.normalized * 3f;
+        Vector2 targetPosition = owner.GetMouseWorldPosition();
 
         if (markerPrefab != null)
         {
