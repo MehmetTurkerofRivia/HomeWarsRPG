@@ -197,8 +197,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInventory
   slot1Weapon: {fileID: 11400000, guid: 1a2b0bead01f42c469019dd4f7ebc752, type: 2}
   slot2Weapon: {fileID: 0}
-  slot1Holder: {fileID: 0}
-  slot2Holder: {fileID: 0}
   slot1Offset: {x: -0.75, y: 0.1, z: 0}
   slot2Offset: {x: 0.75, y: 0.1, z: 0}
 --- !u!4 &178091636 stripped
@@ -460,6 +458,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Character
       objectReference: {fileID: 0}
+    - target: {fileID: 2941529895825263026, guid: 344e00773f201dc44a949501292c6502, type: 3}
+      propertyPath: m_SortingOrder
+      value: -2
+      objectReference: {fileID: 0}
     - target: {fileID: 4098108484016866789, guid: 344e00773f201dc44a949501292c6502, type: 3}
       propertyPath: slot1Holder
       value: 
@@ -467,7 +469,7 @@ PrefabInstance:
     - target: {fileID: 4098108484016866789, guid: 344e00773f201dc44a949501292c6502, type: 3}
       propertyPath: slot1Weapon
       value: 
-      objectReference: {fileID: 11400000, guid: b7158338b6e4d4748861fa8a839cca52, type: 2}
+      objectReference: {fileID: 11400000, guid: b036eb74f4cbb32488813d0dd641ec73, type: 2}
     - target: {fileID: 4098108484016866789, guid: 344e00773f201dc44a949501292c6502, type: 3}
       propertyPath: slot2Holder
       value: 
@@ -475,7 +477,7 @@ PrefabInstance:
     - target: {fileID: 4098108484016866789, guid: 344e00773f201dc44a949501292c6502, type: 3}
       propertyPath: slot2Weapon
       value: 
-      objectReference: {fileID: 11400000, guid: c92769c402ddbb845b43477e3461c992, type: 2}
+      objectReference: {fileID: 11400000, guid: 202213392ae733c408957f89aae3fd8f, type: 2}
     - target: {fileID: 4177529486073391106, guid: 344e00773f201dc44a949501292c6502, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

@@ -7,10 +7,6 @@ public class PlayerInventory : MonoBehaviour
     [SerializeField] private WeaponItem slot1Weapon;
     [SerializeField] private WeaponItem slot2Weapon;
 
-    [Header("Visual Holders")]
-    [SerializeField] private Transform slot1Holder;
-    [SerializeField] private Transform slot2Holder;
-
     [Header("Visual Offsets")]
     [SerializeField] private Vector3 slot1Offset = new Vector3(-0.75f, 0.1f, 0f);
     [SerializeField] private Vector3 slot2Offset = new Vector3(0.75f, 0.1f, 0f);
@@ -60,18 +56,12 @@ public class PlayerInventory : MonoBehaviour
 
     private void RefreshVisuals()
     {
-        if (slot1Holder == null)
-            return;
-
-        if (slot2Holder == null)
-            return;
-
         if (slot1Weapon != null)
         {
             if (slot1Visual != null)
                 Destroy(slot1Visual);
 
-            slot1Visual = CreateWeaponVisual(slot1Weapon, slot1Holder, slot1Offset);
+            slot1Visual = CreateWeaponVisual(slot1Weapon, slot1Offset);
         }
         else if (slot1Visual != null)
         {
@@ -84,7 +74,7 @@ public class PlayerInventory : MonoBehaviour
             if (slot2Visual != null)
                 Destroy(slot2Visual);
 
-            slot2Visual = CreateWeaponVisual(slot2Weapon, slot2Holder, slot2Offset);
+            slot2Visual = CreateWeaponVisual(slot2Weapon, slot2Offset);
         }
         else if (slot2Visual != null)
         {
@@ -93,16 +83,17 @@ public class PlayerInventory : MonoBehaviour
         }
     }
 
-    private GameObject CreateWeaponVisual(WeaponItem weapon, Transform holder, Vector3 offset)
+    private GameObject CreateWeaponVisual(WeaponItem weapon, Vector3 offset)
     {
         if (weapon == null || weapon.VisualPrefab == null)
             return null;
 
-        GameObject visual = Instantiate(weapon.VisualPrefab, holder);
+        GameObject visual = Instantiate(weapon.VisualPrefab);
+
+        visual.transform.SetParent(transform, false);
 
         if (weapon.IsSword)
         {
-            visual.transform.SetParent(transform, false);
             visual.transform.localPosition = Vector3.zero;
             var orbit = visual.GetComponent<WeaponOrbitVisual>();
             if (orbit == null)

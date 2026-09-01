@@ -91,8 +91,11 @@ public class BowWeaponItem : WeaponItem
         // Spawn pozisyonu
         Vector3 spawnPos = owner.transform.position + (Vector3)aimDirection.normalized * 0.8f;
         
-        // OK oluştur ve ata
-        GameObject arrow = Instantiate(arrowPrefab, spawnPos, Quaternion.Euler(0, 0, finalAngleDeg));
+        // Okun rotation'ını velocity yönüne göre hesapla
+        float velocityAngle = Mathf.Atan2(arrowDir.y, arrowDir.x) * Mathf.Rad2Deg;
+        
+        // OK oluştur ve ata - direkt doğru açıda
+        GameObject arrow = Instantiate(arrowPrefab, spawnPos, Quaternion.Euler(0, 0, velocityAngle - 90f));
         Debug.Log($"Arrow created at {spawnPos}");
         
         // Fizik ayarla
@@ -142,7 +145,7 @@ public class MagicWeaponItem : WeaponItem
         if (markerPrefab != null)
         {
             var marker = Object.Instantiate(markerPrefab, targetPosition, Quaternion.identity);
-            Object.Destroy(marker, delayBeforeStrike + 0.5f);
+            Object.Destroy(marker, delayBeforeStrike - 0.2f);
         }
 
         owner.StartCoroutine(StrikeAfterDelay(owner, targetPosition, strong));
@@ -153,7 +156,10 @@ public class MagicWeaponItem : WeaponItem
         yield return new WaitForSeconds(delayBeforeStrike);
 
         if (lightningPrefab != null)
-            Object.Instantiate(lightningPrefab, targetPosition, Quaternion.identity);
+        {
+            Vector2 lightningSpawnPos = targetPosition + Vector2.up * 1.5f;
+            Object.Instantiate(lightningPrefab, lightningSpawnPos, Quaternion.identity);
+        }
 
         float strikeDamage = strong ? damage * 1.5f : damage;
         float radius = strong ? strikeRadius * 1.2f : strikeRadius;
