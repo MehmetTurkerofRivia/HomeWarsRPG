@@ -4,8 +4,8 @@ using UnityEngine.InputSystem;
 public class PlayerInventory : MonoBehaviour
 {
     [Header("Inventory")]
-    [SerializeField] private WeaponItem slot1Weapon;
-    [SerializeField] private WeaponItem slot2Weapon;
+    [SerializeField] private WeaponBehaviour slot1Weapon;
+    [SerializeField] private WeaponBehaviour slot2Weapon;
 
     [Header("Visual Offsets")]
     [SerializeField] private Vector3 slot1Offset = new Vector3(-0.75f, 0.1f, 0f);
@@ -19,8 +19,13 @@ public class PlayerInventory : MonoBehaviour
     private GameObject slot1Visual;
     private GameObject slot2Visual;
 
-    public WeaponItem Slot1Weapon => slot1Weapon;
-    public WeaponItem Slot2Weapon => slot2Weapon;
+    [Header("Staff Attack Animation")]
+    [SerializeField] private float staffLiftAmount = 0.35f;
+    [SerializeField] private float staffRotationAngle = 35f;
+    [SerializeField] private float staffAnimationDuration = 0.18f;
+
+    public WeaponBehaviour Slot1Weapon => slot1Weapon;
+    public WeaponBehaviour Slot2Weapon => slot2Weapon;
 
     private void Awake()
     {
@@ -42,13 +47,13 @@ public class PlayerInventory : MonoBehaviour
             UseSecondaryAttack();
     }
 
-    public void EquipSlot1(WeaponItem weapon)
+    public void EquipSlot1(WeaponBehaviour weapon)
     {
         slot1Weapon = weapon;
         RefreshVisuals();
     }
 
-    public void EquipSlot2(WeaponItem weapon)
+    public void EquipSlot2(WeaponBehaviour weapon)
     {
         slot2Weapon = weapon;
         RefreshVisuals();
@@ -83,12 +88,12 @@ public class PlayerInventory : MonoBehaviour
         }
     }
 
-    private GameObject CreateWeaponVisual(WeaponItem weapon, Vector3 offset)
+    private GameObject CreateWeaponVisual(WeaponBehaviour weapon, Vector3 offset)
     {
-        if (weapon == null || weapon.VisualPrefab == null)
+        if (weapon == null)
             return null;
 
-        GameObject visual = Instantiate(weapon.VisualPrefab);
+        GameObject visual = Instantiate(weapon.gameObject);
 
         visual.transform.SetParent(transform, false);
 
@@ -124,6 +129,8 @@ public class PlayerInventory : MonoBehaviour
             return;
 
         slot1Weapon.UsePrimary(this, GetAimDirection());
+        if (slot1Weapon.IsStaff)
+            StartCoroutine(AnimateStaffAttack(slot1Visual, -staffRotationAngle));
 
         if (slot1Weapon.RotatesOwnerOnPrimaryAttack)
             transform.Rotate(0f, 0f, 90f);
@@ -142,6 +149,8 @@ public class PlayerInventory : MonoBehaviour
             return;
 
         slot2Weapon.UseSecondary(this, GetAimDirection());
+        if (slot2Weapon.IsStaff)
+            StartCoroutine(AnimateStaffAttack(slot2Visual, staffRotationAngle));
         nextSecondaryTime = Time.time + slot2Weapon.Cooldown;
         nextGlobalAttackTime = Time.time + cooldown;
     }
@@ -162,5 +171,36 @@ public class PlayerInventory : MonoBehaviour
         Vector2 mouseWorldPosition = GetMouseWorldPosition();
         Vector2 direction = mouseWorldPosition - (Vector2)transform.position;
         return direction.sqrMagnitude > 0.001f ? direction.normalized : Vector2.right;
+    }
+
+    private System.Collections.IEnumerator AnimateStaffAttack(GameObject staffVisual, float rotationAngle)
+    {
+        if (staffVisual == null)
+            yield break;
+
+        Vector3 startPosition = staffVisual.transform.localPosition;
+        Quaternion startRotation = staffVisual.transform.localRotation;
+        Vector3 liftedPosition = startPosition + Vector3.up * staffLiftAmount;
+        Quaternion liftedRotation = Quaternion.Euler(0f, 0f, rotationAngle) * startRotation;
+        float halfDuration = Mathf.Max(0.01f, staffAnimationDuration * 0.5f);
+
+        for (float elapsed = 0f; elapsed < halfDuration; elapsed += Time.deltaTime)
+        {
+            float progress = Mathf.SmoothStep(0f, 1f, elapsed / halfDuration);
+            staffVisual.transform.localPosition = Vector3.Lerp(startPosition, liftedPosition, progress);
+            staffVisual.transform.localRotation = Quaternion.Slerp(startRotation, liftedRotation, progress);
+            yield return null;
+        }
+
+        for (float elapsed = 0f; elapsed < halfDuration; elapsed += Time.deltaTime)
+        {
+            float progress = Mathf.SmoothStep(0f, 1f, elapsed / halfDuration);
+            staffVisual.transform.localPosition = Vector3.Lerp(liftedPosition, startPosition, progress);
+            staffVisual.transform.localRotation = Quaternion.Slerp(liftedRotation, startRotation, progress);
+            yield return null;
+        }
+
+        staffVisual.transform.localPosition = startPosition;
+        staffVisual.transform.localRotation = startRotation;
     }
 }

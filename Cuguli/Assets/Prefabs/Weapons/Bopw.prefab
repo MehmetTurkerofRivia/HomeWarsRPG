@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1878785599081892047}
   - component: {fileID: 2893001101241380728}
+  - component: {fileID: 4723092061485207741}
   m_Layer: 0
   m_Name: Bopw
   m_TagString: Untagged
@@ -92,3 +93,22 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
+--- !u!114 &4723092061485207741
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 337720313201982725}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19b531dbce934d44aba240b13fef42ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BowWeapon
+  weaponName: Weapon
+  icon: {fileID: 0}
+  cooldown: 0.25
+  rotatesOwnerOnPrimaryAttack: 0
+  arrowPrefab: {fileID: 7269239931925730197, guid: 5392edc6918b3524880da9b85de47151, type: 3}
+  projectileSpeed: 10
+  spreadAngle: 15

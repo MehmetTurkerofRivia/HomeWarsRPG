@@ -5,14 +5,14 @@ public class GameManager : MonoBehaviour
     public const int StorageSlotCount = 6;
 
     [Header("Shared Storage")]
-    [SerializeField] private WeaponItem[] storage = new WeaponItem[StorageSlotCount];
+    [SerializeField] private WeaponBehaviour[] storage = new WeaponBehaviour[StorageSlotCount];
 
-    public WeaponItem GetStorageItem(int index)
+    public WeaponBehaviour GetStorageItem(int index)
     {
         return IsValidStorageIndex(index) ? storage[index] : null;
     }
 
-    public bool TryAddToStorage(WeaponItem item)
+    public bool TryAddToStorage(WeaponBehaviour item)
     {
         if (item == null)
             return false;
@@ -35,12 +35,12 @@ public class GameManager : MonoBehaviour
         return false;
     }
 
-    public WeaponItem RemoveFromStorage(int index)
+    public WeaponBehaviour RemoveFromStorage(int index)
     {
         if (!IsValidStorageIndex(index))
             return null;
 
-        WeaponItem item = storage[index];
+        WeaponBehaviour item = storage[index];
         storage[index] = null;
         return item;
     }
@@ -54,11 +54,11 @@ public class GameManager : MonoBehaviour
         if (playerInventory == null)
             return false;
 
-        WeaponItem item = storage[storageIndex];
+        WeaponBehaviour item = storage[storageIndex];
         if (item == null)
             return false;
 
-        WeaponItem equippedItem = equippedSlot == 1 ? playerInventory.Slot1Weapon : playerInventory.Slot2Weapon;
+        WeaponBehaviour equippedItem = equippedSlot == 1 ? playerInventory.Slot1Weapon : playerInventory.Slot2Weapon;
         if (equippedItem != null && !TryAddToStorage(equippedItem))
             return false;
 

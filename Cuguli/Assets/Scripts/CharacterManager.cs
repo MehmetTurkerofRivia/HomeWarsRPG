@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class CharacterManager : MonoBehaviour
+public class CharacterManager : MonoBehaviour, IDamageable
 {
     [Header("Health")]
     [SerializeField] private int maxHealth = 100;
@@ -33,6 +33,11 @@ public class CharacterManager : MonoBehaviour
         int previousHealth = currentHealth;
         currentHealth = Mathf.Max(0, currentHealth - amount);
         return currentHealth < previousHealth;
+    }
+
+    public void TakeDamage(float damage)
+    {
+        TryDamage(Mathf.CeilToInt(damage));
     }
 
     private void OnValidate()
