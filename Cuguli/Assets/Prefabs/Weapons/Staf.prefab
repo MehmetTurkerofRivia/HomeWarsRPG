@@ -48,7 +48,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MagicWeapon
   weaponName: Weapon
   icon: {fileID: 0}
-  cooldown: 0.25
+  cooldown: 2
   rotatesOwnerOnPrimaryAttack: 0
   markerPrefab: {fileID: 7913874449866496142, guid: 75bda9f4ef4f5744291f8c298aff12ed, type: 3}
   lightningPrefab: {fileID: 948992374629840802, guid: c1ce62c63ddb28a4992f3da4ef0262ec, type: 3}

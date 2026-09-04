@@ -107,8 +107,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BowWeapon
   weaponName: Weapon
   icon: {fileID: 0}
-  cooldown: 0.25
+  cooldown: 0.5
   rotatesOwnerOnPrimaryAttack: 0
   arrowPrefab: {fileID: 7269239931925730197, guid: 5392edc6918b3524880da9b85de47151, type: 3}
   projectileSpeed: 10
   spreadAngle: 15
+  damage: 25
