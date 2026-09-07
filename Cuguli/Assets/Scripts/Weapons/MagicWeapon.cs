@@ -12,6 +12,7 @@ public class MagicWeapon : WeaponBehaviour
     [SerializeField] private float cameraShakeStrength = 0.12f;
 
     public override bool IsStaff => true;
+    public override bool CausesCameraZoom => true;
 
     public override void UsePrimary(PlayerInventory owner, Vector2 aimDirection)
     {

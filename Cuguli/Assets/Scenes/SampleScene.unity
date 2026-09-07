@@ -119,97 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &178091625 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 288679643634830478, guid: 344e00773f201dc44a949501292c6502, type: 3}
-  m_PrefabInstance: {fileID: 926830389}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &178091626
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 178091625}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a8f3d10989fea64fb0fbca00df54e84, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  moveSpeed: 5
-  acceleration: 12
-  deceleration: 14
-  scaleShrinkAmount: 0.1
-  scaleChangeSpeed: 12
-  scalePulseSpeed: 8
---- !u!50 &178091629
-Rigidbody2D:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 178091625}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_GravityScale: 0
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
---- !u!114 &178091630
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 178091625}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 318dcc5d5db5bfc4f8571a6107422b38, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CharacterManager
-  maxHealth: 100
-  currentHealth: 100
-  movementSpeed: 5
-  physicalAttackPower: 10
-  magicalAttackPower: 10
---- !u!114 &178091631
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 178091625}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b930746f309e02f4a81b05a35bb1a6b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerInventory
-  slot1Weapon: {fileID: 0}
-  slot2Weapon: {fileID: 0}
-  slot1Offset: {x: -0.75, y: 0.1, z: 0}
-  slot2Offset: {x: 0.75, y: 0.1, z: 0}
-  staffLiftAmount: 0.35
-  staffRotationAngle: 35
-  staffAnimationDuration: 0.18
---- !u!4 &178091636 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4177529486073391106, guid: 344e00773f201dc44a949501292c6502, type: 3}
-  m_PrefabInstance: {fileID: 926830389}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -223,6 +132,7 @@ GameObject:
   - component: {fileID: 519420029}
   - component: {fileID: 519420030}
   - component: {fileID: 519420033}
+  - component: {fileID: 519420034}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -360,6 +270,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09805cfe9e2d49d47b567766a0b440e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraShake
+--- !u!114 &519420034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de2bcc81535ee344881db637707dcb82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraZoom
+  zoomOutSpeed: 0.1
+  maxZoomAmount: 2
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -477,26 +401,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Character
       objectReference: {fileID: 0}
-    - target: {fileID: 2941529895825263026, guid: 344e00773f201dc44a949501292c6502, type: 3}
-      propertyPath: m_SortingOrder
-      value: -2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4098108484016866789, guid: 344e00773f201dc44a949501292c6502, type: 3}
-      propertyPath: slot1Holder
-      value: 
-      objectReference: {fileID: 178091636}
-    - target: {fileID: 4098108484016866789, guid: 344e00773f201dc44a949501292c6502, type: 3}
-      propertyPath: slot1Weapon
-      value: 
-      objectReference: {fileID: -1336778735531662173, guid: f7c9770e9d11bc94e9cecd6b756e837a, type: 3}
-    - target: {fileID: 4098108484016866789, guid: 344e00773f201dc44a949501292c6502, type: 3}
-      propertyPath: slot2Holder
-      value: 
-      objectReference: {fileID: 178091636}
-    - target: {fileID: 4098108484016866789, guid: 344e00773f201dc44a949501292c6502, type: 3}
-      propertyPath: slot2Weapon
-      value: 
-      objectReference: {fileID: -3447953676177086254, guid: 4a4d5bc983ad30942b499a345113381c, type: 3}
     - target: {fileID: 4177529486073391106, guid: 344e00773f201dc44a949501292c6502, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -540,19 +444,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 288679643634830478, guid: 344e00773f201dc44a949501292c6502, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 178091626}
-    - targetCorrespondingSourceObject: {fileID: 288679643634830478, guid: 344e00773f201dc44a949501292c6502, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 178091629}
-    - targetCorrespondingSourceObject: {fileID: 288679643634830478, guid: 344e00773f201dc44a949501292c6502, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 178091631}
-    - targetCorrespondingSourceObject: {fileID: 288679643634830478, guid: 344e00773f201dc44a949501292c6502, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 178091630}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 344e00773f201dc44a949501292c6502, type: 3}
 --- !u!1 &1593499309
 GameObject:

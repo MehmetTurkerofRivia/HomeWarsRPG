@@ -11,9 +11,12 @@ GameObject:
   - component: {fileID: 4177529486073391106}
   - component: {fileID: 2941529895825263026}
   - component: {fileID: 1095292293034173911}
-  - component: {fileID: 2317272650250805194}
   - component: {fileID: 4098108484016866789}
   - component: {fileID: 8953996939646922635}
+  - component: {fileID: 2856902865735581378}
+  - component: {fileID: 1003483887845360084}
+  - component: {fileID: 677103587813716256}
+  - component: {fileID: 5689467104557577051}
   m_Layer: 0
   m_Name: Character
   m_TagString: Untagged
@@ -30,7 +33,7 @@ Transform:
   m_GameObject: {fileID: 288679643634830478}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.211, y: -1.465, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -83,7 +86,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -2
   m_MaskInteraction: 0
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
   m_Color: {r: 0.09732112, g: 0.764151, b: 0.5849937, a: 1}
@@ -111,7 +114,68 @@ MonoBehaviour:
   moveSpeed: 5
   acceleration: 12
   deceleration: 14
---- !u!50 &2317272650250805194
+  scaleShrinkAmount: 0.1
+  scaleChangeSpeed: 12
+  scalePulseSpeed: 16
+--- !u!114 &4098108484016866789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 288679643634830478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b930746f309e02f4a81b05a35bb1a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInventory
+  slot1Weapon: {fileID: 4723092061485207741, guid: abfab37f091a386439d71192a53cb477, type: 3}
+  slot2Weapon: {fileID: -3447953676177086254, guid: 4a4d5bc983ad30942b499a345113381c, type: 3}
+  slot1Offset: {x: -0.75, y: 0.1, z: 0}
+  slot2Offset: {x: 0.75, y: 0.1, z: 0}
+  staffLiftAmount: 1
+  staffMoveTowardOwnerAmount: 0.2
+  staffRotationAngle: 35
+  staffAnimationDuration: 0.18
+  staffAirborneWaitDuration: 0.5
+  staffLowerAnimationDuration: 0.3
+  abilityZoomAmount: 0.1
+--- !u!114 &8953996939646922635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 288679643634830478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 318dcc5d5db5bfc4f8571a6107422b38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterManager
+  maxHealth: 100
+  currentHealth: 100
+  movementSpeed: 5
+  physicalAttackPower: 10
+  magicalAttackPower: 10
+--- !u!114 &2856902865735581378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 288679643634830478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8f3d10989fea64fb0fbca00df54e84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
+  moveSpeed: 5
+  acceleration: 12
+  deceleration: 14
+  scaleShrinkAmount: 0.1
+  scaleChangeSpeed: 12
+  scalePulseSpeed: 8
+--- !u!50 &1003483887845360084
 Rigidbody2D:
   serializedVersion: 5
   m_ObjectHideFlags: 0
@@ -138,7 +202,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &4098108484016866789
+--- !u!114 &677103587813716256
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -150,11 +214,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b930746f309e02f4a81b05a35bb1a6b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInventory
-  slot1Weapon: {fileID: 11400000, guid: 60073304ad53c3c48a163f491fa87b23, type: 2}
+  slot1Weapon: {fileID: 0}
   slot2Weapon: {fileID: 0}
-  weaponVisualParent: {fileID: 0}
-  weaponVisualOffset: {x: 1, y: 0, z: 0}
---- !u!114 &8953996939646922635
+  slot1Offset: {x: -0.75, y: 0.1, z: 0}
+  slot2Offset: {x: 0.75, y: 0.1, z: 0}
+  staffLiftAmount: 0.35
+  staffMoveTowardOwnerAmount: 0.2
+  staffRotationAngle: 35
+  staffAnimationDuration: 0.18
+  staffAirborneWaitDuration: 1
+  staffLowerAnimationDuration: 0.3
+  abilityZoomAmount: 2
+--- !u!114 &5689467104557577051
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

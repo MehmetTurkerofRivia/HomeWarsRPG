@@ -21,14 +21,30 @@ public class PlayerInventory : MonoBehaviour
     [SerializeField] private float staffMoveTowardOwnerAmount = 0.2f;
     [SerializeField] private float staffRotationAngle = 35f;
     [SerializeField] private float staffAnimationDuration = 0.18f;
-    [SerializeField] private float staffAirborneWaitDuration = 1f;
+    [SerializeField] private float staffAirborneWaitDuration = 0.5f;
+    [SerializeField] private float staffLowerAnimationDuration = 0.3f;
+
+    [Header("Ability Camera Zoom")]
+    [SerializeField] private float abilityZoomAmount = 0.5f;
 
     public WeaponBehaviour Slot1Weapon => slot1Weapon;
     public WeaponBehaviour Slot2Weapon => slot2Weapon;
 
     private void Awake()
     {
+        staffAirborneWaitDuration = 0.5f;
+        abilityZoomAmount = 0.5f;
         RefreshVisuals();
+
+        Camera mainCamera = Camera.main;
+        if (mainCamera != null)
+        {
+            CameraZoom cameraZoom = mainCamera.GetComponent<CameraZoom>();
+            if (cameraZoom == null)
+                cameraZoom = mainCamera.gameObject.AddComponent<CameraZoom>();
+
+            cameraZoom.SetFollowTarget(transform);
+        }
     }
 
     private void Update()
@@ -127,6 +143,7 @@ public class PlayerInventory : MonoBehaviour
             return;
 
         slot1Weapon.UsePrimary(this, GetAimDirection());
+        TriggerAbilityCameraZoom(slot1Weapon);
         if (slot1Weapon.IsStaff)
             StartCoroutine(AnimateStaffAttack(slot1Visual, -staffRotationAngle));
 
@@ -145,6 +162,7 @@ public class PlayerInventory : MonoBehaviour
             return;
 
         slot2Weapon.UseSecondary(this, GetAimDirection());
+        TriggerAbilityCameraZoom(slot2Weapon);
         if (slot2Weapon.IsStaff)
             StartCoroutine(AnimateStaffAttack(slot2Visual, staffRotationAngle));
         nextSecondaryTime = Time.time + slot2Weapon.Cooldown;
@@ -168,6 +186,19 @@ public class PlayerInventory : MonoBehaviour
         return direction.sqrMagnitude > 0.001f ? direction.normalized : Vector2.right;
     }
 
+    private void TriggerAbilityCameraZoom(WeaponBehaviour weapon)
+    {
+        if (weapon == null || !weapon.CausesCameraZoom || Camera.main == null)
+            return;
+
+        CameraZoom cameraZoom = Camera.main.GetComponent<CameraZoom>();
+        if (cameraZoom == null)
+            cameraZoom = Camera.main.gameObject.AddComponent<CameraZoom>();
+
+        cameraZoom.SetFollowTarget(transform);
+        cameraZoom.ZoomIn(abilityZoomAmount);
+    }
+
     private System.Collections.IEnumerator AnimateStaffAttack(GameObject staffVisual, float rotationAngle)
     {
         if (staffVisual == null)
@@ -183,11 +214,12 @@ public class PlayerInventory : MonoBehaviour
             floatingObject = staffVisual.AddComponent<FloatingObject>();
 
         Quaternion liftedRotation = Quaternion.Euler(0f, 0f, rotationAngle) * startRotation;
-        float halfDuration = Mathf.Max(0.01f, staffAnimationDuration * 0.5f);
+        float liftDuration = Mathf.Max(0.01f, staffAnimationDuration * 0.5f);
+        float lowerDuration = Mathf.Max(0.01f, staffLowerAnimationDuration);
 
-        for (float elapsed = 0f; elapsed < halfDuration; elapsed += Time.deltaTime)
+        for (float elapsed = 0f; elapsed < liftDuration; elapsed += Time.deltaTime)
         {
-            float progress = Mathf.SmoothStep(0f, 1f, elapsed / halfDuration);
+            float progress = Mathf.SmoothStep(0f, 1f, elapsed / liftDuration);
             floatingObject.SetAnimationOffset(Vector3.Lerp(Vector3.zero, animationOffset, progress));
             staffVisual.transform.localRotation = Quaternion.Slerp(startRotation, liftedRotation, progress);
             yield return null;
@@ -197,9 +229,9 @@ public class PlayerInventory : MonoBehaviour
         staffVisual.transform.localRotation = liftedRotation;
         yield return new WaitForSeconds(staffAirborneWaitDuration);
 
-        for (float elapsed = 0f; elapsed < halfDuration; elapsed += Time.deltaTime)
+        for (float elapsed = 0f; elapsed < lowerDuration; elapsed += Time.deltaTime)
         {
-            float progress = Mathf.SmoothStep(0f, 1f, elapsed / halfDuration);
+            float progress = Mathf.SmoothStep(0f, 1f, elapsed / lowerDuration);
             floatingObject.SetAnimationOffset(Vector3.Lerp(animationOffset, Vector3.zero, progress));
             staffVisual.transform.localRotation = Quaternion.Slerp(liftedRotation, startRotation, progress);
             yield return null;

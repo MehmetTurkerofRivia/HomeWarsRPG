@@ -8,6 +8,7 @@ public class BowWeapon : WeaponBehaviour
     [SerializeField] private float damage = 25f;
 
     public override bool IsSword => false;
+    public override bool CausesCameraZoom => true;
 
     public override void UsePrimary(PlayerInventory owner, Vector2 aimDirection)
     {

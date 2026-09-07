@@ -48,7 +48,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NecromancerStaffWeapon
   weaponName: Weapon
   icon: {fileID: 0}
-  cooldown: 2
+  cooldown: 4
   rotatesOwnerOnPrimaryAttack: 0
   summonPrefab: {fileID: 8000172623711293243, guid: 7ee3ccf72c28dc34f98c36138cb3cf2c, type: 3}
   summonCount: 4
