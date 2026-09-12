@@ -282,8 +282,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de2bcc81535ee344881db637707dcb82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraZoom
-  zoomOutSpeed: 0.1
-  maxZoomAmount: 2
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -401,6 +399,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Character
       objectReference: {fileID: 0}
+    - target: {fileID: 4098108484016866789, guid: 344e00773f201dc44a949501292c6502, type: 3}
+      propertyPath: slot1Weapon
+      value: 
+      objectReference: {fileID: 4723092061485207741, guid: abfab37f091a386439d71192a53cb477, type: 3}
+    - target: {fileID: 4098108484016866789, guid: 344e00773f201dc44a949501292c6502, type: 3}
+      propertyPath: slot2Weapon
+      value: 
+      objectReference: {fileID: -1336778735531662173, guid: f7c9770e9d11bc94e9cecd6b756e837a, type: 3}
     - target: {fileID: 4177529486073391106, guid: 344e00773f201dc44a949501292c6502, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

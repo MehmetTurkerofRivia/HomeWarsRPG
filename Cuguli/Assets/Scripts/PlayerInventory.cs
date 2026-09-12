@@ -24,8 +24,10 @@ public class PlayerInventory : MonoBehaviour
     [SerializeField] private float staffAirborneWaitDuration = 0.5f;
     [SerializeField] private float staffLowerAnimationDuration = 0.3f;
 
-    [Header("Ability Camera Zoom")]
-    [SerializeField] private float abilityZoomAmount = 0.5f;
+    [Header("Bow Attack Animation")]
+    [SerializeField] private float bowPullDistance = 0.35f;
+    [SerializeField] private float bowPullDuration = 0.06f;
+    [SerializeField] private float bowReleaseDuration = 0.22f;
 
     public WeaponBehaviour Slot1Weapon => slot1Weapon;
     public WeaponBehaviour Slot2Weapon => slot2Weapon;
@@ -33,18 +35,7 @@ public class PlayerInventory : MonoBehaviour
     private void Awake()
     {
         staffAirborneWaitDuration = 0.5f;
-        abilityZoomAmount = 0.5f;
         RefreshVisuals();
-
-        Camera mainCamera = Camera.main;
-        if (mainCamera != null)
-        {
-            CameraZoom cameraZoom = mainCamera.GetComponent<CameraZoom>();
-            if (cameraZoom == null)
-                cameraZoom = mainCamera.gameObject.AddComponent<CameraZoom>();
-
-            cameraZoom.SetFollowTarget(transform);
-        }
     }
 
     private void Update()
@@ -123,6 +114,14 @@ public class PlayerInventory : MonoBehaviour
             return visual;
         }
 
+        if (weapon.IsShield)
+        {
+            Vector3 shieldOffset = offset.normalized * (offset.magnitude + 0.15f);
+            visual.transform.localPosition = shieldOffset;
+            visual.transform.localRotation = Quaternion.Euler(0f, 0f, 180f);
+            return visual;
+        }
+
         visual.transform.localPosition = offset;
         visual.transform.localRotation = Quaternion.identity;
 
@@ -142,8 +141,12 @@ public class PlayerInventory : MonoBehaviour
         if (Time.time < nextPrimaryTime)
             return;
 
-        slot1Weapon.UsePrimary(this, GetAimDirection());
-        TriggerAbilityCameraZoom(slot1Weapon);
+        Vector2 aimDirection = GetAimDirection();
+        AimBowVisual(slot1Weapon, slot1Visual, aimDirection);
+        slot1Weapon.UsePrimary(this, aimDirection);
+        ActivateShield(slot1Weapon, slot1Visual);
+        if (slot1Weapon.IsBow)
+            StartCoroutine(AnimateBowAttack(slot1Visual, aimDirection));
         if (slot1Weapon.IsStaff)
             StartCoroutine(AnimateStaffAttack(slot1Visual, -staffRotationAngle));
 
@@ -161,8 +164,12 @@ public class PlayerInventory : MonoBehaviour
         if (Time.time < nextSecondaryTime)
             return;
 
-        slot2Weapon.UseSecondary(this, GetAimDirection());
-        TriggerAbilityCameraZoom(slot2Weapon);
+        Vector2 aimDirection = GetAimDirection();
+        AimBowVisual(slot2Weapon, slot2Visual, aimDirection);
+        slot2Weapon.UseSecondary(this, aimDirection);
+        ActivateShield(slot2Weapon, slot2Visual);
+        if (slot2Weapon.IsBow)
+            StartCoroutine(AnimateBowAttack(slot2Visual, aimDirection));
         if (slot2Weapon.IsStaff)
             StartCoroutine(AnimateStaffAttack(slot2Visual, staffRotationAngle));
         nextSecondaryTime = Time.time + slot2Weapon.Cooldown;
@@ -186,17 +193,71 @@ public class PlayerInventory : MonoBehaviour
         return direction.sqrMagnitude > 0.001f ? direction.normalized : Vector2.right;
     }
 
-    private void TriggerAbilityCameraZoom(WeaponBehaviour weapon)
+    private void ActivateShield(WeaponBehaviour weapon, GameObject visual)
     {
-        if (weapon == null || !weapon.CausesCameraZoom || Camera.main == null)
+        if (!weapon.IsShield || visual == null)
             return;
 
-        CameraZoom cameraZoom = Camera.main.GetComponent<CameraZoom>();
-        if (cameraZoom == null)
-            cameraZoom = Camera.main.gameObject.AddComponent<CameraZoom>();
+        ShieldWeapon shield = visual.GetComponent<ShieldWeapon>();
+        if (shield != null)
+            shield.Activate();
+    }
 
-        cameraZoom.SetFollowTarget(transform);
-        cameraZoom.ZoomIn(abilityZoomAmount);
+    public Vector3 GetWeaponVisualPosition(WeaponBehaviour weapon)
+    {
+        if (weapon == slot1Weapon && slot1Visual != null)
+            return slot1Visual.transform.position;
+
+        if (weapon == slot2Weapon && slot2Visual != null)
+            return slot2Visual.transform.position;
+
+        return transform.position;
+    }
+
+    private void AimBowVisual(WeaponBehaviour weapon, GameObject visual, Vector2 aimDirection)
+    {
+        if (!weapon.IsBow || visual == null || aimDirection.sqrMagnitude <= 0.001f)
+            return;
+
+        Vector3 localAimDirection = transform.InverseTransformDirection(aimDirection.normalized);
+        float aimAngle = Mathf.Atan2(localAimDirection.y, localAimDirection.x) * Mathf.Rad2Deg;
+        visual.transform.localRotation = Quaternion.Euler(0f, 0f, aimAngle);
+    }
+
+    private System.Collections.IEnumerator AnimateBowAttack(GameObject bowVisual, Vector2 aimDirection)
+    {
+        if (bowVisual == null)
+            yield break;
+
+        FloatingObject floatingObject = bowVisual.GetComponent<FloatingObject>();
+        if (floatingObject == null)
+            floatingObject = bowVisual.AddComponent<FloatingObject>();
+
+        Vector3 localAimDirection = transform.InverseTransformDirection(aimDirection).normalized;
+        float aimAngle = Mathf.Atan2(localAimDirection.y, localAimDirection.x) * Mathf.Rad2Deg;
+        bowVisual.transform.localRotation = Quaternion.Euler(0f, 0f, aimAngle);
+
+        Vector3 pullOffset = -localAimDirection * bowPullDistance;
+        float pullDuration = Mathf.Max(0.01f, bowPullDuration);
+        float releaseDuration = Mathf.Max(0.01f, bowReleaseDuration);
+
+        for (float elapsed = 0f; elapsed < pullDuration; elapsed += Time.deltaTime)
+        {
+            float progress = elapsed / pullDuration;
+            floatingObject.SetAnimationOffset(Vector3.Lerp(Vector3.zero, pullOffset, progress));
+            yield return null;
+        }
+
+        floatingObject.SetAnimationOffset(pullOffset);
+
+        for (float elapsed = 0f; elapsed < releaseDuration; elapsed += Time.deltaTime)
+        {
+            float progress = Mathf.SmoothStep(0f, 1f, elapsed / releaseDuration);
+            floatingObject.SetAnimationOffset(Vector3.Lerp(pullOffset, Vector3.zero, progress));
+            yield return null;
+        }
+
+        floatingObject.SetAnimationOffset(Vector3.zero);
     }
 
     private System.Collections.IEnumerator AnimateStaffAttack(GameObject staffVisual, float rotationAngle)

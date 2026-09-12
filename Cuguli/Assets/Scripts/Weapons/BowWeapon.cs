@@ -7,8 +7,8 @@ public class BowWeapon : WeaponBehaviour
     [SerializeField] private float spreadAngle = 15f;
     [SerializeField] private float damage = 25f;
 
+    public override bool IsBow => true;
     public override bool IsSword => false;
-    public override bool CausesCameraZoom => true;
 
     public override void UsePrimary(PlayerInventory owner, Vector2 aimDirection)
     {
@@ -19,7 +19,7 @@ public class BowWeapon : WeaponBehaviour
         float finalAngle = baseAngle + Random.Range(-spreadAngle, spreadAngle);
         float angleRadians = finalAngle * Mathf.Deg2Rad;
         Vector2 arrowDirection = new Vector2(Mathf.Cos(angleRadians), Mathf.Sin(angleRadians));
-        Vector3 spawnPosition = owner.transform.position + (Vector3)aimDirection.normalized * 0.8f;
+        Vector3 spawnPosition = owner.GetWeaponVisualPosition(this);
         float velocityAngle = Mathf.Atan2(arrowDirection.y, arrowDirection.x) * Mathf.Rad2Deg;
 
         GameObject arrow = Instantiate(arrowPrefab, spawnPosition, Quaternion.Euler(0f, 0f, velocityAngle - 90f));

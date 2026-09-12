@@ -9,7 +9,6 @@ public class NecromancerStaffWeapon : WeaponBehaviour
     [SerializeField] private float damage = 15f;
 
     public override bool IsStaff => true;
-    public override bool CausesCameraZoom => true;
 
     public override void UsePrimary(PlayerInventory owner, Vector2 aimDirection)
     {

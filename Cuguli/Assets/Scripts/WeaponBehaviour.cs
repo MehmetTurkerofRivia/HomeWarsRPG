@@ -13,7 +13,8 @@ public abstract class WeaponBehaviour : MonoBehaviour
     public bool RotatesOwnerOnPrimaryAttack => rotatesOwnerOnPrimaryAttack;
     public virtual bool IsSword => false;
     public virtual bool IsStaff => false;
-    public virtual bool CausesCameraZoom => false;
+    public virtual bool IsShield => false;
+    public virtual bool IsBow => false;
 
     public abstract void UsePrimary(PlayerInventory owner, Vector2 aimDirection);
     public abstract void UseSecondary(PlayerInventory owner, Vector2 aimDirection);
