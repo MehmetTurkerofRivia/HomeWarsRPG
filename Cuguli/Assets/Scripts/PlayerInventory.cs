@@ -142,6 +142,8 @@ public class PlayerInventory : MonoBehaviour
             return;
 
         Vector2 aimDirection = GetAimDirection();
+        if (slot1Weapon is BowWeapon bowWeapon)
+            aimDirection = bowWeapon.GetAimDirection(this);
         AimBowVisual(slot1Weapon, slot1Visual, aimDirection);
         slot1Weapon.UsePrimary(this, aimDirection);
         ActivateShield(slot1Weapon, slot1Visual);
@@ -165,6 +167,8 @@ public class PlayerInventory : MonoBehaviour
             return;
 
         Vector2 aimDirection = GetAimDirection();
+        if (slot2Weapon is BowWeapon bowWeapon)
+            aimDirection = bowWeapon.GetAimDirection(this);
         AimBowVisual(slot2Weapon, slot2Visual, aimDirection);
         slot2Weapon.UseSecondary(this, aimDirection);
         ActivateShield(slot2Weapon, slot2Visual);
@@ -212,6 +216,17 @@ public class PlayerInventory : MonoBehaviour
             return slot2Visual.transform.position;
 
         return transform.position;
+    }
+
+    public Transform GetWeaponVisualTransform(WeaponBehaviour weapon)
+    {
+        if (weapon == slot1Weapon && slot1Visual != null)
+            return slot1Visual.transform;
+
+        if (weapon == slot2Weapon && slot2Visual != null)
+            return slot2Visual.transform;
+
+        return null;
     }
 
     private void AimBowVisual(WeaponBehaviour weapon, GameObject visual, Vector2 aimDirection)

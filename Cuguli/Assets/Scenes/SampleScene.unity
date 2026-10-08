@@ -402,7 +402,7 @@ PrefabInstance:
     - target: {fileID: 4098108484016866789, guid: 344e00773f201dc44a949501292c6502, type: 3}
       propertyPath: slot1Weapon
       value: 
-      objectReference: {fileID: 4723092061485207741, guid: abfab37f091a386439d71192a53cb477, type: 3}
+      objectReference: {fileID: -1336778735531662173, guid: 52d209d1c16083349a8c98e2a77e5ba1, type: 3}
     - target: {fileID: 4098108484016866789, guid: 344e00773f201dc44a949501292c6502, type: 3}
       propertyPath: slot2Weapon
       value: 
