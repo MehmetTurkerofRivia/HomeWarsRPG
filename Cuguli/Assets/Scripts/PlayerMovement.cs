@@ -14,6 +14,10 @@ public class PlayerMovement : MonoBehaviour
     private PlayerInventory inventory;
     private Vector3 originalScale;
     private float scalePulseTime;
+    private float slowMultiplier = 1f;
+    private float slowTimeRemaining;
+
+    public float CurrentSpeedMultiplier => slowMultiplier;
 
     private void Awake()
     {
@@ -24,8 +28,26 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        UpdateSlowEffect();
         HandleMovement();
         UpdateMovementScale();
+    }
+
+    public void ApplySlow(float multiplier, float duration)
+    {
+        slowMultiplier = Mathf.Clamp(multiplier, 0.05f, 1f);
+        slowTimeRemaining = Mathf.Max(slowTimeRemaining, duration);
+    }
+
+    private void UpdateSlowEffect()
+    {
+        if (slowTimeRemaining <= 0f)
+        {
+            slowMultiplier = 1f;
+            return;
+        }
+
+        slowTimeRemaining -= Time.deltaTime;
     }
 
     private void UpdateMovementScale()
@@ -68,7 +90,7 @@ public class PlayerMovement : MonoBehaviour
         move = move.normalized;
 
         Vector2 currentVelocity = rb.linearVelocity;
-        Vector2 targetVelocity = move * moveSpeed;
+        Vector2 targetVelocity = move * moveSpeed * slowMultiplier;
 
         if (move == Vector2.zero)
         {
