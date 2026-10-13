@@ -27,6 +27,7 @@ public class SpiderEnemy : EnemyBase
         ChooseDirection();
         nextWebTime = Time.time + webInterval;
         FindTarget();
+        FaceTargetHorizontally(target);
     }
 
     private void Update()
@@ -56,6 +57,7 @@ public class SpiderEnemy : EnemyBase
         if (target == null)
             FindTarget();
 
+        FaceTargetHorizontally(target);
         body.linearVelocity = isMoving ? movementDirection * moveSpeed : Vector2.zero;
     }
 

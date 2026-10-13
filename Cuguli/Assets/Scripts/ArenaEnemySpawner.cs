@@ -1,15 +1,18 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ArenaEnemySpawner : MonoBehaviour
 {
     [Header("Arena")]
+    [SerializeField] private GameObject playerPrefab;
     [SerializeField] private Transform player;
+    [SerializeField] private Transform playerSpawnPoint;
     [SerializeField] private Transform[] spawnPoints;
     [SerializeField] private float spawnRadius = 7f;
 
     [Header("Ants")]
     [SerializeField] private GameObject antPrefab;
-    [SerializeField] private float antSpawnInterval = 1f;
+    [SerializeField] private float antSpawnInterval = 0.35f;
     [SerializeField] private int antMaxAlive = 8;
     [SerializeField] private int antTotalCount = 20;
 
@@ -30,6 +33,8 @@ public class ArenaEnemySpawner : MonoBehaviour
 
     private void Awake()
     {
+        SpawnPlayerAtCenter();
+
         if (player == null)
         {
             CharacterManager playerObject = FindFirstObjectByType<CharacterManager>();
@@ -37,7 +42,31 @@ public class ArenaEnemySpawner : MonoBehaviour
                 player = playerObject.transform;
         }
 
+        if (player != null)
+        {
+            PlayerInventory inventory = player.GetComponent<PlayerInventory>();
+            if (inventory != null)
+                inventory.RebuildWeaponVisuals();
+        }
+
         SpawnInitialEnemies();
+    }
+
+    private void SpawnPlayerAtCenter()
+    {
+        Vector2 center = playerSpawnPoint != null
+            ? (Vector2)playerSpawnPoint.position
+            : (Vector2)transform.position;
+
+        if (player == null && playerPrefab != null)
+        {
+            GameObject spawnedPlayer = Instantiate(playerPrefab, center, Quaternion.identity);
+            player = spawnedPlayer.transform;
+            return;
+        }
+
+        if (player != null)
+            player.position = center;
     }
 
     private void Update()
@@ -55,18 +84,45 @@ public class ArenaEnemySpawner : MonoBehaviour
 
     private void SpawnInitialEnemies()
     {
-        SpawnMultiple(spiderPrefab, spiderCount);
-        SpawnMultiple(bulletSoldierPrefab, bulletSoldierCount);
-        SpawnMultiple(cockroachPrefab, cockroachCount);
+        List<int> availableSpawnPoints = CreateAvailableSpawnPoints();
+        SpawnMultiple(spiderPrefab, spiderCount, availableSpawnPoints);
+        SpawnMultiple(bulletSoldierPrefab, bulletSoldierCount, availableSpawnPoints);
+        SpawnMultiple(cockroachPrefab, cockroachCount, availableSpawnPoints);
     }
 
-    private void SpawnMultiple(GameObject prefab, int count)
+    private List<int> CreateAvailableSpawnPoints()
+    {
+        List<int> available = new List<int>();
+        if (spawnPoints == null)
+            return available;
+
+        for (int i = 0; i < spawnPoints.Length; i++)
+            available.Add(i);
+
+        return available;
+    }
+
+    private void SpawnMultiple(GameObject prefab, int count, List<int> availableSpawnPoints)
     {
         if (prefab == null)
             return;
 
-        for (int i = 0; i < count; i++)
-            Spawn(prefab, GetSpawnPosition(i));
+        int spawnCount = spawnPoints != null && spawnPoints.Length > 0
+            ? Mathf.Min(count, availableSpawnPoints.Count)
+            : count;
+
+        for (int i = 0; i < spawnCount; i++)
+        {
+            int pointIndex = -1;
+            if (availableSpawnPoints.Count > 0)
+            {
+                int availableIndex = Random.Range(0, availableSpawnPoints.Count);
+                pointIndex = availableSpawnPoints[availableIndex];
+                availableSpawnPoints.RemoveAt(availableIndex);
+            }
+
+            Spawn(prefab, GetSpawnPosition(pointIndex));
+        }
     }
 
     private void Spawn(GameObject prefab, Vector2 position)
@@ -76,8 +132,8 @@ public class ArenaEnemySpawner : MonoBehaviour
 
     private Vector2 GetSpawnPosition(int index)
     {
-        if (spawnPoints != null && spawnPoints.Length > 0)
-            return spawnPoints[index % spawnPoints.Length].position;
+        if (index >= 0 && spawnPoints != null && index < spawnPoints.Length)
+            return spawnPoints[index].position;
 
         Vector2 center = player != null ? (Vector2)player.position : Vector2.zero;
         return center + Random.insideUnitCircle * spawnRadius;

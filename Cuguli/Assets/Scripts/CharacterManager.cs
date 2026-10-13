@@ -38,6 +38,7 @@ public class CharacterManager : MonoBehaviour, IDamageable
     public void TakeDamage(float damage)
     {
         TryDamage(Mathf.CeilToInt(damage));
+        Debug.Log($"Player damaged: {damage:0.##}. Health: {currentHealth}/{maxHealth}", this);
     }
 
     private void OnValidate()

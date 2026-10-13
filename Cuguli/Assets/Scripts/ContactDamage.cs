@@ -33,14 +33,7 @@ public class ContactDamage : MonoBehaviour
         if (hasHit && damageOnlyOncePerTarget)
             return;
 
-        Transform targetTransform = other.transform;
-        if (!targetTransform.CompareTag("Enemy"))
-            targetTransform = targetTransform.root;
-
-        if (!targetTransform.CompareTag("Enemy"))
-            return;
-
-        IDamageable target = targetTransform.GetComponentInParent<IDamageable>();
+        IDamageable target = other.GetComponentInParent<IDamageable>();
         if (target == null)
             return;
 

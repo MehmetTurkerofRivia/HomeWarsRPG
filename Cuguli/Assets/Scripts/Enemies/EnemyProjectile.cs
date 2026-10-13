@@ -13,6 +13,12 @@ public class EnemyProjectile : MonoBehaviour
     private void Awake()
     {
         gameObject.tag = "EnemyProjectile";
+        transform.rotation = Quaternion.identity;
+
+        Rigidbody2D body = GetComponent<Rigidbody2D>();
+        if (body != null)
+            body.constraints |= RigidbodyConstraints2D.FreezeRotation;
+
         Destroy(gameObject, lifetime);
     }
 

@@ -17,6 +17,7 @@ public class AntEnemy : EnemyBase
         body.gravityScale = 0f;
         body.constraints = RigidbodyConstraints2D.FreezeRotation;
         FindTarget();
+        FaceTargetHorizontally(target);
     }
 
     private void FixedUpdate()
@@ -27,6 +28,7 @@ public class AntEnemy : EnemyBase
         if (target == null)
             return;
 
+        FaceTargetHorizontally(target);
         Vector2 direction = ((Vector2)target.position - body.position).normalized;
         body.linearVelocity = direction * moveSpeed;
     }

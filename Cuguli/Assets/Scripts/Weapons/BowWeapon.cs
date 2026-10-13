@@ -47,6 +47,14 @@ public class BowWeapon : WeaponBehaviour
         float velocityAngle = Mathf.Atan2(arrowDirection.y, arrowDirection.x) * Mathf.Rad2Deg;
 
         GameObject arrow = Instantiate(arrowPrefab, spawnPosition, Quaternion.Euler(0f, 0f, velocityAngle - 90f));
+        Collider2D[] ownerColliders = owner.GetComponentsInChildren<Collider2D>();
+        Collider2D[] arrowColliders = arrow.GetComponentsInChildren<Collider2D>();
+        foreach (Collider2D ownerCollider in ownerColliders)
+        {
+            foreach (Collider2D arrowCollider in arrowColliders)
+                Physics2D.IgnoreCollision(ownerCollider, arrowCollider);
+        }
+
         Transform arrowVisual = arrow.GetComponentInChildren<SpriteRenderer>()?.transform;
         if (arrowVisual != null)
         {
@@ -56,6 +64,8 @@ public class BowWeapon : WeaponBehaviour
         }
 
         ContactDamage contactDamage = arrow.GetComponent<ContactDamage>();
+        if (contactDamage == null)
+            contactDamage = arrow.AddComponent<ContactDamage>();
         if (contactDamage != null)
             contactDamage.SetDamage(damage);
 

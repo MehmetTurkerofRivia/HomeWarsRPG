@@ -15,6 +15,9 @@ public class PlayerInventory : MonoBehaviour
     private float nextSecondaryTime;
     private GameObject slot1Visual;
     private GameObject slot2Visual;
+    private static WeaponBehaviour savedSlot1Weapon;
+    private static WeaponBehaviour savedSlot2Weapon;
+    private static bool hasSavedLoadout;
 
     [Header("Staff Attack Animation")]
     [SerializeField] private float staffLiftAmount = 1f;
@@ -34,6 +37,18 @@ public class PlayerInventory : MonoBehaviour
 
     private void Awake()
     {
+        if (hasSavedLoadout && savedSlot1Weapon != null)
+        {
+            slot1Weapon = savedSlot1Weapon;
+        }
+
+        if (hasSavedLoadout && savedSlot2Weapon != null)
+        {
+            slot2Weapon = savedSlot2Weapon;
+        }
+
+        SaveLoadout();
+
         staffAirborneWaitDuration = 0.5f;
         RefreshVisuals();
     }
@@ -56,13 +71,22 @@ public class PlayerInventory : MonoBehaviour
     public void EquipSlot1(WeaponBehaviour weapon)
     {
         slot1Weapon = weapon;
+        SaveLoadout();
         RefreshVisuals();
     }
 
     public void EquipSlot2(WeaponBehaviour weapon)
     {
         slot2Weapon = weapon;
+        SaveLoadout();
         RefreshVisuals();
+    }
+
+    private void SaveLoadout()
+    {
+        savedSlot1Weapon = slot1Weapon;
+        savedSlot2Weapon = slot2Weapon;
+        hasSavedLoadout = true;
     }
 
     private void RefreshVisuals()
@@ -92,6 +116,11 @@ public class PlayerInventory : MonoBehaviour
             Destroy(slot2Visual);
             slot2Visual = null;
         }
+    }
+
+    public void RebuildWeaponVisuals()
+    {
+        RefreshVisuals();
     }
 
     private GameObject CreateWeaponVisual(WeaponBehaviour weapon, Vector3 offset)
@@ -185,9 +214,15 @@ public class PlayerInventory : MonoBehaviour
         if (camera == null)
             return transform.position;
 
-        Vector3 mouseWorldPosition = camera.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-        mouseWorldPosition.z = 0f;
-        return mouseWorldPosition;
+        if (Mouse.current == null)
+            return transform.position;
+
+        Ray mouseRay = camera.ScreenPointToRay(Mouse.current.position.ReadValue());
+        Plane gameplayPlane = new Plane(Vector3.forward, Vector3.zero);
+        if (!gameplayPlane.Raycast(mouseRay, out float distance))
+            return transform.position;
+
+        return mouseRay.GetPoint(distance);
     }
 
     private Vector2 GetAimDirection()

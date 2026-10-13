@@ -33,14 +33,14 @@ public class SwordWeapon : WeaponBehaviour
 
         foreach (Collider2D hit in hits)
         {
-            Transform targetTransform = hit.transform;
-            if (!targetTransform.CompareTag("Enemy"))
-                targetTransform = targetTransform.root;
-
-            if (targetTransform == owner.transform || !targetTransform.CompareTag("Enemy"))
+            IDamageable target = hit.GetComponentInParent<IDamageable>();
+            if (target == null || target is CharacterManager)
                 continue;
 
-            if (targetTransform.TryGetComponent(out IDamageable target))
+            if (target is MonoBehaviour targetBehaviour && targetBehaviour.transform.root == owner.transform.root)
+                continue;
+
+            if (target != null)
                 target.TakeDamage(attackDamage);
         }
 

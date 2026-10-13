@@ -31,6 +31,9 @@ public class NecromancerStaffWeapon : WeaponBehaviour
             Vector3 offset = Quaternion.Euler(0f, 0f, angle) * new Vector3(summonRadius, 0f, 0f);
             GameObject summon = Instantiate(summonPrefab, owner.transform.position + offset, Quaternion.identity);
             ContactDamage contactDamage = summon.GetComponent<ContactDamage>();
+            if (contactDamage == null)
+                contactDamage = summon.AddComponent<ContactDamage>();
+
             if (contactDamage != null)
             {
                 contactDamage.SetDamage(damage);

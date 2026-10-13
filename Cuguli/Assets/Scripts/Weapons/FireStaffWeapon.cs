@@ -86,14 +86,14 @@ public class FireStaffWeapon : WeaponBehaviour
         Collider2D[] hits = Physics2D.OverlapCircleAll(targetPosition, radius);
         foreach (Collider2D hit in hits)
         {
-            Transform targetTransform = hit.transform;
-            if (!targetTransform.CompareTag("Enemy"))
-                targetTransform = targetTransform.root;
-
-            if (targetTransform == owner.transform || !targetTransform.CompareTag("Enemy"))
+            IDamageable damageable = hit.GetComponentInParent<IDamageable>();
+            if (damageable == null || damageable is CharacterManager)
                 continue;
 
-            if (targetTransform.TryGetComponent(out IDamageable damageable))
+            if (damageable is MonoBehaviour targetBehaviour && targetBehaviour.transform.root == owner.transform.root)
+                continue;
+
+            if (damageable != null)
                 damageable.TakeDamage(strikeDamage);
         }
     }

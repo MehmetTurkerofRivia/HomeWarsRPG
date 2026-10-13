@@ -5,6 +5,7 @@ public class CockroachEnemy : EnemyBase
     [Header("Cockroach Movement")]
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float runDuration = 2f;
+    [SerializeField] private Transform target;
 
     private Rigidbody2D body;
     private Vector2 movementDirection;
@@ -18,6 +19,8 @@ public class CockroachEnemy : EnemyBase
             body = gameObject.AddComponent<Rigidbody2D>();
         body.gravityScale = 0f;
         body.constraints = RigidbodyConstraints2D.FreezeRotation;
+        FindTarget();
+        FaceTargetHorizontally(target);
         ChooseDirection();
     }
 
@@ -30,6 +33,10 @@ public class CockroachEnemy : EnemyBase
 
     private void FixedUpdate()
     {
+        if (target == null)
+            FindTarget();
+
+        FaceTargetHorizontally(target);
         body.linearVelocity = movementDirection * moveSpeed;
     }
 
@@ -49,6 +56,13 @@ public class CockroachEnemy : EnemyBase
         if (movementDirection == Vector2.zero)
             movementDirection = Vector2.right;
         stateTime = runDuration;
+    }
+
+    private void FindTarget()
+    {
+        CharacterManager player = FindFirstObjectByType<CharacterManager>();
+        if (player != null)
+            target = player.transform;
     }
 
     protected override void OnValidate()

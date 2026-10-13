@@ -18,6 +18,22 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     protected virtual void Awake()
     {
         currentHealth = maxHealth;
+        transform.rotation = Quaternion.identity;
+
+        Rigidbody2D body = GetComponent<Rigidbody2D>();
+        if (body != null)
+            body.constraints |= RigidbodyConstraints2D.FreezeRotation;
+    }
+
+    protected void FaceTargetHorizontally(Transform target)
+    {
+        if (target == null)
+            return;
+
+        Vector3 scale = transform.localScale;
+        scale.x = Mathf.Abs(scale.x) * (target.position.x < transform.position.x ? -1f : 1f);
+        transform.localScale = scale;
+        transform.rotation = Quaternion.identity;
     }
 
     public void TakeDamage(float damage)
@@ -26,6 +42,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
             return;
 
         currentHealth = Mathf.Max(0f, currentHealth - damage);
+        Debug.Log($"{name} damaged: {damage:0.##}. Health: {currentHealth:0.##}/{maxHealth:0.##}", this);
         if (currentHealth <= 0f)
             Die();
     }
