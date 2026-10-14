@@ -211,18 +211,26 @@ public class PlayerInventory : MonoBehaviour
     public Vector2 GetMouseWorldPosition()
     {
         Camera camera = Camera.main;
-        if (camera == null)
+        if (camera == null || Mouse.current == null)
             return transform.position;
 
-        if (Mouse.current == null)
-            return transform.position;
+        Vector3 mouseScreen = Mouse.current.position.ReadValue();
+        Ray mouseRay = camera.ScreenPointToRay(mouseScreen);
 
-        Ray mouseRay = camera.ScreenPointToRay(Mouse.current.position.ReadValue());
-        Plane gameplayPlane = new Plane(Vector3.forward, Vector3.zero);
+        Vector3 planeNormal = -camera.transform.forward;
+        float planeDistance = transform.position.z;
+        Plane gameplayPlane = new Plane(planeNormal, new Vector3(0f, 0f, planeDistance));
+
         if (!gameplayPlane.Raycast(mouseRay, out float distance))
-            return transform.position;
+        {
+            Vector3 fallback = camera.ScreenToWorldPoint(new Vector3(mouseScreen.x, mouseScreen.y, Mathf.Abs(camera.transform.position.z)));
+            fallback.z = 0f;
+            return fallback;
+        }
 
-        return mouseRay.GetPoint(distance);
+        Vector3 worldPoint = mouseRay.GetPoint(distance);
+        worldPoint.z = 0f;
+        return worldPoint;
     }
 
     private Vector2 GetAimDirection()
